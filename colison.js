@@ -68,22 +68,33 @@ class Circle {
     }
     return false;
   }
+
+  // Verifica si el clic fue sobre el círculo
+  isClicked(mouseX, mouseY) {
+    const distX = this.posX - mouseX;
+    const distY = this.posY - mouseY;
+    const distance = Math.sqrt(distX * distX + distY * distY);
+    return distance <= this.radius; // Si la distancia es menor o igual al radio, está clicado
+  }
 }
 
 let circles = [];
 
+// Generar círculos aleatorios
 function generateCircles(n) {
   for (let i = 0; i < n; i++) {
     let radius = Math.random() * 30 + 20; // Radio entre 20 y 50
-    let x = Math.random() * (window_width - radius * 2) + radius;
-    let y = Math.random() * (window_height - radius * 2) + radius;
-    let color = `#${Math.floor(Math.random()*16777215).toString(16)}`; // Color aleatorio
+    let x = Math.random() * (window_width - radius * 2) + radius; // Posición X aleatoria
+    let y = window_height - radius; // Posición Y fija cerca del borde inferior
+    let color = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Color aleatorio
     let speed = Math.random() * 4 + 1; // Velocidad entre 1 y 5
     let text = `C${i + 1}`; // Etiqueta del círculo
     circles.push(new Circle(x, y, radius, color, text, speed));
   }
 }
 
+
+// Animar los círculos
 function animate() {
   ctx.clearRect(0, 0, window_width, window_height);
   for (let i = 0; i < circles.length; i++) {
@@ -105,5 +116,15 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
+// Manejar clic en el canvas para eliminar círculos
+canvas.addEventListener("click", function(event) {
+  const mouseX = event.clientX;
+  const mouseY = event.clientY;
+
+  // Eliminar círculos clicados
+  circles = circles.filter(circle => !circle.isClicked(mouseX, mouseY));
+});
+
+// Generar 10 círculos y comenzar la animación
 generateCircles(10);
 animate();
